@@ -1,0 +1,62 @@
+Python
+
+import streamlit as st
+import os
+from openai import OpenAI
+from fpdf import FPDF
+
+# Configuration de la page
+st.set_page_config(page_title="IA FLUX - Générateur", page_icon="🚀")
+
+# Initialisation OpenAI (la clé sera configurée dans Streamlit Cloud plus tard)
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+# Fonction PDF
+def creation_pdf(texte, langue):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", 'B', 16)
+    pdf.set_text_color(30, 58, 138)
+    pdf.cell(0, 10, "IA FLUX - Rapport de Contenu", ln=True, align='C')
+    pdf.ln(10)
+    pdf.set_font("Arial", size=12)
+    pdf.set_text_color(0, 0, 0)
+    texte_propre = texte.encode('latin-1', 'ignore').decode('latin-1')
+    pdf.multi_cell(0, 10, texte_propre)
+    return pdf.output(dest='S').encode('latin-1')
+
+# --- INTERFACE ---
+st.title("IA FLUX 🚀")
+st.write("Générez du contenu captivant pour vos réseaux sociaux")
+
+sujet = st.text_area("De quoi voulez-vous parler ?", placeholder="Entrez votre idée...")
+
+col1, col2, col3, col4 = st.columns(4)
+if 'ton' not in st.session_state: st.session_state.ton = "Professionnel"
+
+with col1:
+    if st.button("💼\nPro"): st.session_state.ton = "Professionnel"
+with col2:
+    if st.button("📚\nPéda"): st.session_state.ton = "Pédagogique"
+with col3:
+    if st.button("😄\nHumour"): st.session_state.ton = "Humoristique"
+with col4:
+    if st.button("⚙️\nTech"): st.session_state.ton = "Technique"
+
+langue = st.selectbox("🌍 Langue", ["Français", "Anglais", "Espagnol", "Allemand"])
+
+if st.button("Générer le contenu", type="primary", use_container_width=True):
+    if sujet:
+        with st.spinner('IA FLUX travaille...'):
+            prompt = f"Rédige un post pour IA FLUX en {langue}. Sujet: {sujet}. Style: {st.session_state.ton}."
+            response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
+            st.session_state.resultat = response.choices[0].message.content
+            st.session_state.langue_gen = langue
+
+if 'resultat' in st.session_state:
+    st.markdown("---")
+    st.write(st.session_state.resultat)
+    pdf_bytes = creation_pdf(st.session_state.resultat, st.session_state.langue_gen)
+    st.download_button("📥 Télécharger en PDF", data=pdf_bytes, file_name="IA_FLUX_Post.pdf", mime="application/pdf")
+
+st.caption("© 2026 IA FLUX")
