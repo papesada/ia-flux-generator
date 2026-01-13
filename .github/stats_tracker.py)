@@ -1,0 +1,37 @@
+Python
+
+import csv
+from datetime import datetime
+
+def log_generation(niveau, matiere, theme, status="SUCCESS"):
+    """Enregistre l'activité de génération pour analyse ultérieure."""
+    file_path = 'ia_flux_usage_stats.csv'
+    
+    # Vérifier si le fichier existe pour ajouter l'en-tête
+    try:
+        with open(file_path, 'x', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow(['Date', 'Niveau', 'Matiere', 'Theme', 'Status'])
+    except FileExistsError:
+        pass
+
+    # Ajouter la ligne de log
+    with open(file_path, 'a', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            niveau,
+            matiere,
+            theme,
+            status
+        ])
+2. Intégration après ton Filtre de Modération
+Tu peux maintenant appeler cette fonction juste après la génération réussie ou en cas de blocage :
+
+Python
+
+if validation:
+    # ... code de génération ...
+    log_generation(niveau_choisi, matiere_choisie, theme_choisi, "SUCCESS")
+else:
+    log_generation(niveau_choisi, matiere_choisie, theme_choisi, "BLOCKED")
