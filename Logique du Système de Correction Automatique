@@ -1,0 +1,37 @@
+Python
+
+import streamlit as st
+
+# Initialisation de l'état du score
+if 'score' not in st.session_state:
+    st.session_state.score = 0
+
+def afficher_correcteur_automatique(questions, reponses_correctes):
+    st.header("🏁 Auto-Correction Interactive")
+    
+    reponses_utilisateur = []
+    
+    # Création du formulaire de réponse
+    with st.form("quiz_form"):
+        for i, q in enumerate(questions):
+            st.write(f"**Question {i+1}:** {q['texte']}")
+            choix = st.radio(f"Sélectionnez votre réponse (Q{i+1})", q['options'], key=f"q{i}")
+            reponses_utilisateur.append(choix)
+            
+        soumettre = st.form_submit_button("Vérifier mes réponses")
+
+    if soumettre:
+        score = 0
+        for i, rep in enumerate(reponses_utilisateur):
+            if rep == reponses_correctes[i]:
+                score += 1
+                st.success(f"✅ Question {i+1} : Bonne réponse !")
+            else:
+                st.error(f"❌ Question {i+1} : Mauvaise réponse. La correction était : {reponses_correctes[i]}")
+        
+        # Calcul du pourcentage
+        performance = (score / len(questions)) * 100
+        st.metric("Votre Note Finale", f"{score}/{len(questions)}", f"{performance}%")
+        
+        # Log des performances dans les stats de l'entreprise
+        # stats_tracker.log_score(score, len(questions))
