@@ -1,0 +1,19 @@
+Python
+
+# Mise à jour suggérée pour referentiel.py
+PROGRAMME_SENEGAL.update({
+    "Moyen": {
+        "3ème (BFEM)": {
+            "Mathématiques": ["Théorème de Thalès", "Systèmes d'équations", "Trigonométrie"],
+            "SVT": ["La reproduction humaine", "Le système nerveux", "L'éducation environnementale"],
+            "Anglais": ["African Leaders", "Environmental issues in Senegal", "ICT and Education"]
+        }
+    },
+    "Secondaire": {
+        "Terminale (BAC)": {
+            "Philosophie": ["L'État et la Liberté", "La conscience et l'Inconscient", "La philosophie en Afrique"],
+            "Histoire": ["La décolonisation en Afrique Noire Francophone", "Le conflit israélo-arabe", "Le Sénégal de 1960 à nos jours"],
+            "Physique-Chimie": ["Champ magnétique", "Estérification et Hydrolyse", "Cinématique"]
+        }
+    }
+})
