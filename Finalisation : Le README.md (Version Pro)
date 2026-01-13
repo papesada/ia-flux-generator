@@ -1,0 +1,17 @@
+Markdown
+
+# 🇸🇳 IA FLUX - Assistant Pédagogique Intelligent
+
+IA FLUX est une plateforme conçue pour accompagner les enseignants sénégalais dans la préparation de leurs supports de cours et évaluations, en parfaite adéquation avec le programme du Ministère de l'Éducation Nationale.
+
+## ✨ Fonctionnalités Clés
+- **Référentiel National Intégré** : Couvre tous les cycles (Élémentaire, Moyen, Secondaire).
+- **Génération de Fiches PDF** : Export immédiat de supports de cours structurés.
+- **Sécurité & Modération** : Filtre intelligent garantissant un contenu 100% scolaire.
+- **Analyse d'Impact** : Suivi des statistiques d'utilisation par matière et niveau.
+- **Architecture Sécurisée** : Proxy intégré pour la protection des données et des APIs.
+
+## 🚀 Technologie
+- **Frontend** : Streamlit & Tailwind CSS
+- **Backend** : Node.js (Proxy) & Python
+- **IA** : OpenAI & Hugging Face (FLUX models)
