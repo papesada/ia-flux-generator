@@ -1,0 +1,55 @@
+HTML
+
+async function genererImage() {
+    const promptSaisi = document.getElementById('prompt').value;
+    
+    // REMPLACEZ CECI PAR VOTRE TOKEN RÉEL
+    const token = "VOTRE_TOKEN_HUGGING_FACE_ICI"; 
+
+    if(!promptSaisi) {
+        alert("Veuillez saisir une description / Bindal li nga bëgg");
+        return;
+    }
+
+    // Préparation de l'interface
+    const loading = document.getElementById('loading');
+    const result = document.getElementById('result');
+    const btnGen = document.getElementById('btn-gen');
+
+    loading.classList.remove('hidden');
+    result.classList.add('hidden');
+    btnGen.disabled = true;
+    btnGen.innerText = "Chargement... / Mu ngiy ñëw...";
+
+    // Optimisation du prompt pour un style éducatif net
+    const promptOptimise = `${promptSaisi}, clear educational illustration, professional pedagogical diagram, bright colors, white background, high resolution, 4k`;
+
+    try {
+        const response = await fetch("https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev", {
+            headers: { 
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            method: "POST",
+            body: JSON.stringify({ inputs: promptOptimise }),
+        });
+
+        if (!response.ok) throw new Error("Erreur API");
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        
+        // Affichage du résultat
+        const img = document.getElementById('output-image');
+        img.src = url;
+        document.getElementById('download-link').href = url;
+        
+        result.classList.remove('hidden');
+    } catch (e) {
+        alert("Njumte / Erreur : Impossible de contacter l'IA. Vérifiez votre connexion ou votre Token.");
+    } finally {
+        loading.classList.add('hidden');
+        btnGen.disabled = false;
+        btnGen.innerText = translations[currentLang].gen + " / " + translations['wo'].gen;
+    }
+}
