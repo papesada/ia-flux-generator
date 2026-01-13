@@ -1,16 +1,144 @@
-# 🇸🇳 PAPESADAFLUX : IA Éducative Sénégal
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAPESADAFLUX | Portail Éducatif Sénégal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .sn-border { border-bottom: 6px solid #00853f; position: relative; }
+        .sn-border::after { content: ''; position: absolute; bottom: -6px; left: 33.33%; width: 33.33%; border-bottom: 6px solid #fdef42; }
+        .sn-border::before { content: ''; position: absolute; bottom: -6px; right: 0; width: 33.33%; border-bottom: 6px solid #e31b23; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+    <div class="sn-border"></div>
 
-Bienvenue dans le projet **ia-flux-generator**. Cet outil est conçu pour aider les élèves de **6ème au Sénégal** à générer des illustrations pour leurs cours de SVT, d'Histoire et de Géographie grâce au modèle **FLUX.1**.
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
+        <div class="flex justify-end gap-2 mb-6">
+            <button onclick="setLanguage('fr')" class="px-4 py-1 rounded-full border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-600 hover:text-white transition">Français</button>
+            <button onclick="setLanguage('wo')" class="px-4 py-1 rounded-full border-2 border-green-600 text-green-600 font-bold hover:bg-green-600 hover:text-white transition">Wolof</button>
+        </div>
 
-## 🚀 Fonctionnalités
-- Génération d'images haute qualité avec l'IA Flux.
-- Interface adaptée aux couleurs du Sénégal.
-- Préréglages pour les cours (Cartes, Cellules, Portraits historiques).
+        <header class="text-center mb-10">
+            <h1 class="text-5xl font-black text-slate-900 mb-2">PAPESADAFLUX</h1>
+            <p id="sub-title" class="text-xl text-green-700 font-medium italic">L'IA au service de l'école sénégalaise</p>
+        </header>
 
-## 🛠️ Installation
-1. Clonez le dépôt.
-2. Ajoutez votre clé API Hugging Face.
-3. Ouvrez `index.html`.
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-1 space-y-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 id="cycle-title" class="font-bold text-xs mb-4 text-slate-400 uppercase tracking-widest text-center">Tolluway / Niveau</h2>
+                    <div class="flex flex-col gap-3">
+                        <button onclick="updateCycle('elementaire')" class="w-full text-left p-4 rounded-xl bg-green-50 hover:bg-green-100 text-green-800 font-bold transition border border-green-200">🌱 Élémentaire (CI-CM2)</button>
+                        <button onclick="updateCycle('moyen')" class="w-full text-left p-4 rounded-xl bg-yellow-50 hover:bg-yellow-100 text-yellow-800 font-bold transition border border-yellow-200">📖 Moyen (6è-3è)</button>
+                        <button onclick="updateCycle('secondaire')" class="w-full text-left p-4 rounded-xl bg-red-50 hover:bg-red-100 text-red-800 font-bold transition border border-red-200">🎓 Secondaire (L & S)</button>
+                    </div>
+                </div>
+            </div>
 
----
-Développé par **Papesada** - Pour une éducation numérique accessible.
+            <div class="lg:col-span-3 space-y-6">
+                <div class="bg-white p-8 rounded-3xl shadow-xl border-t-8 border-green-600">
+                    <label id="label-prompt" class="block font-bold text-slate-700 mb-3 text-lg">Décris ton sujet de cours :</label>
+                    <textarea id="prompt" class="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-green-500 outline-none text-xl shadow-inner" rows="3" placeholder="Ex: Une carte du relief du Sénégal..."></textarea>
+                    
+                    <div id="shortcuts" class="mt-4 flex flex-wrap gap-2">
+                        </div>
+
+                    <button onclick="genererImage()" id="btn-gen" class="w-full mt-8 bg-slate-900 hover:bg-black text-white font-black py-5 rounded-2xl shadow-2xl transition-all active:scale-95 text-xl uppercase tracking-tighter">
+                        Sos nataal bi / Générer
+                    </button>
+                </div>
+
+                <div id="loading" class="hidden text-center py-12 bg-white rounded-3xl border-2 border-dashed border-slate-200">
+                    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-700 mx-auto"></div>
+                    <p id="loading-text" class="mt-6 text-slate-500 font-bold text-xl">L'IA dessine pour toi...</p>
+                </div>
+
+                <div id="result" class="hidden bg-white p-6 rounded-3xl shadow-2xl border border-slate-100 animate-pulse">
+                    <img id="output-image" src="" alt="Image Pédagogique" class="w-full rounded-2xl shadow-lg mb-6 border-4 border-white">
+                    <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+                        <button onclick="window.print()" class="flex items-center gap-2 bg-slate-100 px-6 py-3 rounded-xl font-bold hover:bg-slate-200 transition">🖨️ <span id="btn-print">Imprimer</span></button>
+                        <a id="download-link" href="#" download="papesadaflux.jpg" class="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 transition">⬇️ <span id="btn-save">Enregistrer</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            fr: { sub: "L'IA pour tous : du CI à la Terminale", cycle: "Niveau Scolaire", label: "Décris ton sujet de cours :", loading: "L'IA dessine pour toi...", print: "Imprimer le cours", save: "Enregistrer l'image", gen: "Générer" },
+            wo: { sub: "Xam-xamu IA ngir ñépp : tambalee CI ba Terminale", cycle: "Tolluwayu jàng bi", label: "Bindal li nga bëgg nataal bi woné :", loading: "IA bi mu ngiy liggéey nataal bi...", print: "Móol nataal bi", save: "Sartal nataal bi", gen: "Sos nataal bi" }
+        };
+
+        const samples = {
+            elementaire: { fr: ["Un lion au Sénégal", "Le baobab géant", "L'alphabet illustré"], wo: ["Gaynde bu Senegaal", "Gouye gi", "Abasada bi ak nataal"] },
+            moyen: { fr: ["Schéma du cœur humain", "Carte du relief Sénégal", "Le cycle de l'eau"], wo: ["Nataal xol", "Maapu Senegaal", "Ndox mi ak jawwu bi"] },
+            secondaire: { fr: ["Molécule d'ADN (S)", "L'empire du Ghana (L)", "Circuit électrique"], wo: ["ADN (Séri S)", "Nguru Gana (Séri L)", "Kuraan bi"] }
+        };
+
+        let currentLang = 'fr';
+        let currentCycle = 'elementaire';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('sub-title').innerText = translations[lang].sub;
+            document.getElementById('cycle-title').innerText = translations[lang].cycle;
+            document.getElementById('label-prompt').innerText = translations[lang].label;
+            document.getElementById('loading-text').innerText = translations[lang].loading;
+            document.getElementById('btn-print').innerText = translations[lang].print;
+            document.getElementById('btn-save').innerText = translations[lang].save;
+            document.getElementById('btn-gen').innerText = translations[lang].gen + " / " + translations['wo'].gen;
+            updateShortcuts();
+        }
+
+        function updateCycle(cycle) {
+            currentCycle = cycle;
+            updateShortcuts();
+        }
+
+        function updateShortcuts() {
+            const div = document.getElementById('shortcuts');
+            div.innerHTML = "";
+            samples[currentCycle][currentLang].forEach(txt => {
+                const btn = document.createElement('button');
+                btn.className = "text-xs font-bold bg-slate-100 hover:bg-green-200 px-3 py-2 rounded-lg transition border border-slate-200";
+                btn.innerText = txt;
+                btn.onclick = () => document.getElementById('prompt').value = txt;
+                div.appendChild(btn);
+            });
+        }
+
+        async function genererImage() {
+            const prompt = document.getElementById('prompt').value;
+            const token = "hf_...iAWq"; // VOTRE CLÉ HUGGING FACE
+
+            if(!prompt) return;
+
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('result').classList.remove('animate-pulse');
+
+            try {
+                const response = await fetch("https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev", {
+                    headers: { Authorization: `Bearer ${token}` },
+                    method: "POST",
+                    body: JSON.stringify({ inputs: prompt }),
+                });
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                document.getElementById('output-image').src = url;
+                document.getElementById('download-link').href = url;
+                document.getElementById('result').classList.remove('hidden');
+            } catch (e) {
+                alert("Njumte / Erreur");
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+        
+        setLanguage('fr');
+    </script>
+</body>
+</html>
