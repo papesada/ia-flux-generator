@@ -1,0 +1,36 @@
+Python
+
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def afficher_dashboard():
+    st.title("📊 Tableau de Bord IA FLUX")
+    
+    # Lecture des données enregistrées
+    try:
+        df = pd.read_csv('ia_flux_usage_stats.csv')
+        
+        # 1. Chiffres clés (KPIs)
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Total Utilisations", len(df))
+        col2.metric("Cours Générés", len(df[df['Action'] == 'Generation_Cours']))
+        
+        # Calcul du taux de réussite moyen
+        quiz_df = df[df['Action'] == 'RESULTAT_QUIZ']
+        if not quiz_df.empty:
+            avg_score = (quiz_df['Score'].sum() / quiz_df['Total_Questions'].sum()) * 100
+            col3.metric("Taux de Réussite Moyen", f"{int(avg_score)}%")
+
+        # 2. Graphique des matières les plus consultées
+        st.subheader("📈 Popularité par Matière")
+        matiere_counts = df['Matière'].value_counts()
+        st.bar_chart(matiere_counts)
+
+    except FileNotFoundError:
+        st.warning("Aucune donnée disponible pour le moment. Commencez à générer des cours !")
+
+# Intégration dans le menu principal
+# if menu == "Dashboard":
+#     afficher_dashboard()
+🏆 Ce que ce Dashboard apporte à ton entreprise :
