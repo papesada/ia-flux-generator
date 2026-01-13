@@ -1,0 +1,22 @@
+Python
+
+if st.button("📝 Générer un QCM d'évaluation"):
+    with st.spinner("Conception du QCM en cours..."):
+        # Le prompt spécifique pour le Sénégal
+        prompt_qcm = f"""
+        En tant qu'expert pédagogique au Sénégal, crée un QCM de 5 questions 
+        sur le thème '{theme_choisi}' pour une classe de {classe_choisie}.
+        Pour chaque question :
+        - 3 options (A, B, C)
+        - Une seule bonne réponse
+        - Fournis le corrigé à la fin.
+        Utilise des contextes locaux si possible.
+        """
+        
+        # Appel à votre fonction de génération via le proxy
+        qcm_resultat = generer_contenu(prompt_qcm)
+        st.subheader("Quiz d'Évaluation rapide")
+        st.write(qcm_resultat)
+        
+        # Option pour ajouter le QCM au PDF
+        st.download_button("Télécharger le QCM (PDF)", data=export_pdf(qcm_resultat
