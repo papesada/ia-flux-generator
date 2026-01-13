@@ -1,0 +1,22 @@
+JavaScript
+
+async function genererImage() {
+    const prompt = document.getElementById('prompt').value;
+    // On ne met PLUS le token ici ! On appelle ton serveur proxy.
+    const proxyUrl = "https://ton-proxy-ia-flux.onrender.com/generate"; 
+
+    if(!prompt) return;
+
+    document.getElementById('loading').classList.remove('hidden');
+    
+    try {
+        const response = await fetch(proxyUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ inputs: prompt }),
+        });
+        
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        document.getElementById('output-image').src = url;
+        // ... reste du code
