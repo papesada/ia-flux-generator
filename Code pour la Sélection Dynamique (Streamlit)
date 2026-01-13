@@ -1,0 +1,23 @@
+Python
+
+import streamlit as st
+from referentiel import PROGRAMME_SENEGAL
+
+st.title("🚀 IA FLUX - Assistant Pédagogique")
+
+# 1. Sélection du Cycle
+cycle_choisi = st.selectbox("Choisissez le cycle scolaire :", list(PROGRAMME_SENEGAL.keys()))
+
+# 2. Sélection de la Classe (dépend du cycle)
+classes_disponibles = list(PROGRAMME_SENEGAL[cycle_choisi].keys())
+classe_choisie = st.selectbox("Choisissez la classe :", classes_disponibles)
+
+# 3. Sélection de la Matière (dépend de la classe)
+matieres_disponibles = list(PROGRAMME_SENEGAL[cycle_choisi][classe_choisie].keys())
+matiere_choisie = st.selectbox("Choisissez la matière :", matieres_disponibles)
+
+# 4. Sélection du Thème (dépend de la matière)
+themes_disponibles = PROGRAMME_SENEGAL[cycle_choisi][classe_choisie][matiere_choisie]
+theme_choisi = st.selectbox("Choisissez le thème du cours :", themes_disponibles)
+
+st.info(f"📍 Vous préparez un contenu pour : {cycle_choisi} > {classe_choisie} >
