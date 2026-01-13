@@ -1,0 +1,22 @@
+Python
+
+import pandas as pd
+import streamlit as st
+
+def afficher_stats():
+    st.title("📊 Tableau de Bord IA FLUX")
+    try:
+        df = pd.read_csv('ia_flux_usage_stats.csv')
+        
+        # Répartition par Matière
+        st.subheader("Demandes par Matière")
+        stats_matiere = df['Matiere'].value_counts()
+        st.bar_chart(stats_matiere)
+        
+        # Taux d'acceptation vs blocage
+        st.subheader("Statut des Requêtes (Modération)")
+        stats_status = df['Status'].value_counts()
+        st.pie_chart(stats_status)
+        
+    except FileNotFoundError:
+        st.write("Aucune donnée disponible pour le moment.")
