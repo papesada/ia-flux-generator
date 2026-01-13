@@ -1,0 +1,26 @@
+Python
+
+from referentiel import PROGRAMME_SENEGAL
+
+def verifier_conformite_pedagogique(niveau, matiere, theme_demande):
+    """
+    Vérifie si le thème demandé fait partie du programme officiel.
+    """
+    try:
+        themes_officiels = PROGRAMME_SENEGAL[niveau][matiere]
+        if theme_demande in themes_officiels:
+            return True, "Thème validé."
+        else:
+            return False, "Sujet non répertorié dans le programme officiel."
+    except KeyError:
+        return False, "Niveau ou matière non conforme."
+
+# --- Logique d'exécution ---
+validation, message = verifier_conformite_pedagogique(niveau_choisi, matiere_choisie, theme_choisi)
+
+if validation:
+    # Lancer l'appel à l'API OpenAI/Hugging Face
+    resultat = generer_contenu_ia(theme_choisi)
+else:
+    # Bloquer la requête et informer l'utilisateur
+    st.warning(f"⚠️ Action refusée : {message}")
