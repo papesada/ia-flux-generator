@@ -1,0 +1,14 @@
+Python
+
+import streamlit as st
+
+# Déplacement des contrôles dans la sidebar
+with st.sidebar:
+    st.image("https://img.icons8.com/color/96/senegal.png")
+    st.title("🇸🇳 Configuration")
+    mode = st.radio("Choisir le mode :", ["Générateur", "Dashboard", "Aide"])
+    
+    st.info("💡 Conseil : Pour le niveau Secondaire, soyez précis dans les termes scientifiques.")
+
+if mode == "Générateur":
+    # Ton code de sélection dynamique
